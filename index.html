@@ -1,5 +1,121 @@
+<!DOCTYPE html>
 <html>
-  <body>
-    <label>Enter the secrete key: </label><input type="text">
-  </body>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+    body {
+      background-image: url("https://images.unsplash.com/photo-1615457670617-6b32cc6720a0?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+      background-size: cover;
+      background-attachment: fixed;
+      color: #ffffff;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+
+    label {
+      font-size: 24px;
+      text-shadow: 0 0 8px #00ffff;
+    }
+
+    input[type="text"] {
+      font-size: 20px;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      outline: none;
+      width: 300px;
+      box-shadow: 0 0 10px #00ffff;
+      backdrop-filter: blur(5px);
+    }
+
+    button {
+      font-size: 20px;
+      padding: 10px 20px;
+      margin-left: 10px;
+      background: linear-gradient(45deg, #0ff, #08f);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 12px #00ffff;
+      transition: transform 0.2s ease;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    #pass {
+      margin-top: 30px;
+      font-size: 22px;
+      color: #00ffcc;
+      text-shadow: 0 0 10px #0ff;
+    }
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 10px 0;
+      background: rgba(0, 0, 0, 0.5);
+      color: #ccc;
+      font-size: 14px;
+      text-shadow: 0 0 5px #0ff;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    footer a {
+      color: #00ffff;
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+</head>
+<body>
+  <label>Enter the Access Code:</label><br><br>
+  <input type="text" id="key">
+  <button onclick="checkCode()">Unlock</button>
+
+  <p id="pass"></p>
+
+  <script>
+    const storedHash = "b85a0c907f2d63edf149bfb9828778474ac916ff0368391df5ad6100c13214f2";
+    const passToken = "U2FsdGVkX19ZGC43BtVtQb2zLX08aPVAJo13kaalecs=";
+
+    async function hashCode(text) {
+      const msgBuffer = new TextEncoder().encode(text);
+      const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      return hashHex;
+    }
+
+    async function checkCode() {
+      const inputCode = document.getElementById("key").value;
+      const inputHash = await hashCode(inputCode);
+
+      if (inputHash === storedHash) {
+        const decrypted = CryptoJS.AES.decrypt(passToken, inputCode).toString(CryptoJS.enc.Utf8);
+        document.getElementById("pass").textContent = `Cosmic Secret: ${decrypted}`;
+      } else {
+        document.getElementById("pass").textContent = "Access Denied: Wrong Code!";
+      }
+    }
+  </script>
+
+  <footer>
+    <p> Created by <strong>Amirhossein</strong></p>
+    <p> <a href="mailto:amirhossein.najafi.cs@gmail.com">amirhossein.najafi.cs@gmail.com</a></p>
+    <p>© 2025 Amirhossein. All rights reserved.</p>
+  </footer>
+</body>
 </html>
